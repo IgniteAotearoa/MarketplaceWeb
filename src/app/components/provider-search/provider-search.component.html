@@ -95,9 +95,7 @@
                 {{ provider.location?.city }}{{ provider.location?.country ? ', ' + provider.location.country : '' }}
               </div>
               <hr class="provider-divider">
-              @if (provider.fee) {
-                <div class="fee">${{ provider.fee }} per session</div>
-              }
+          
               <div class="card-footer">
                 <div class="booking-mediums">
                   @if (provider.bookingMediums?.video) {
