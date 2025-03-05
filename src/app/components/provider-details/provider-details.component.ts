@@ -5,24 +5,39 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProviderService } from '../../services/provider.service';
 import { ProviderDetails } from '../../models/provider.interface';
 import { Subject, takeUntil } from 'rxjs';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-provider-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
+    MatInputModule
+  ],
   templateUrl: './provider-details.component.html',
   styleUrl: './provider-details.component.sass'
 })
 export class ProviderDetailsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+  availableDates: Date[] = [];
   
   provider: ProviderDetails | null = null;
   loading = true;
+  loadingTimeSlots = false;
   error: string | null = null;
-  selectedDate: string | null = null;
+  selectedDate: Date | null = null;
   selectedTime: string | null = null;
   selectedMedium: string | null = null;
   availableTimeSlots: string[] = [];
+  amTimeSlots: string[] = [];
+  pmTimeSlots: string[] = [];
   bookingMediums: { [key: string]: boolean } = {
     video: false,
     phone: false,
@@ -46,6 +61,72 @@ export class ProviderDetailsComponent implements OnInit, OnDestroy {
       email: ['', [Validators.required, Validators.email]],
       phone: ['', Validators.required]
     });
+  }
+
+  dateFilter = (date: Date | null): boolean => {
+    if (!date) return false;
+    return this.availableDates.some(
+      availableDate => availableDate.toDateString() === date.toDateString()
+    );
+  };
+
+  onDateChange(selectedDate: Date | null): void {
+    console.log('Calendar selection event:', selectedDate);
+    if (!selectedDate) {
+      console.log('No date selected');
+      return;
+    }
+
+    if (!this.dateFilter(selectedDate)) {
+      console.log('Date not available');
+      return;
+    }
+
+    this.selectedDate = selectedDate;
+    this.selectedTime = null;
+    this.availableTimeSlots = [];
+
+    if (this.provider?.providerId) {
+      const dateString = selectedDate.toISOString().split('T')[0];
+      console.log('Fetching times for date:', dateString);
+      this.loadingTimeSlots = true;
+      
+      this.providerService.getAvailableTimes(this.provider.providerId, dateString)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (times) => {
+            console.log('Raw times received:', times);
+            // Format times and separate into AM/PM
+            const formattedTimes = times.map(time => {
+              const date = new Date(time);
+              return date.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              });
+            });
+            
+            // Separate into AM and PM arrays
+            this.amTimeSlots = formattedTimes.filter(time => time.includes('AM'));
+            this.pmTimeSlots = formattedTimes.filter(time => time.includes('PM'));
+            
+            // Sort the arrays
+            this.amTimeSlots.sort();
+            this.pmTimeSlots.sort();
+            
+            console.log('AM times:', this.amTimeSlots);
+            console.log('PM times:', this.pmTimeSlots);
+            this.loadingTimeSlots = false;
+          },
+          error: (error) => {
+            console.error('Error loading available times:', error);
+            this.error = 'Failed to load available times. Please try again.';
+            this.loadingTimeSlots = false;
+          }
+        });
+    } else {
+      console.log('No provider ID available');
+    }
   }
 
   ngOnInit(): void {
@@ -72,6 +153,8 @@ export class ProviderDetailsComponent implements OnInit, OnDestroy {
         next: (provider) => {
           this.provider = provider;
           this.updateBookingMediums();
+          // Convert available dates strings to Date objects
+          this.availableDates = provider.availableDates.map(date => new Date(date));
           this.loading = false;
         },
         error: (error) => {
@@ -95,17 +178,6 @@ export class ProviderDetailsComponent implements OnInit, OnDestroy {
 
   onMediumSelect(medium: string): void {
     this.selectedMedium = medium;
-  }
-
-  onDateSelect(date: string): void {
-    this.selectedDate = date;
-    this.selectedTime = null;
-    if (this.provider) {
-      // Filter time slots for the selected date
-      this.availableTimeSlots = this.provider.availableTimes.filter(time => 
-        time.startsWith(date.split('T')[0])
-      );
-    }
   }
 
   onTimeSelect(time: string): void {

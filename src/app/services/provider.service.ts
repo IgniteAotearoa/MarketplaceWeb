@@ -101,4 +101,11 @@ export class ProviderService {
     });
     return Array.from(specialtiesSet).sort();
   }
+
+  getAvailableTimes(providerId: string, date: string): Observable<string[]> {
+    return this.http.get<string[]>(`${environment.apiBaseUrl}/api/external/marketplace/providers/${providerId}/times`, {
+      headers: this.headers,
+      params: { date }
+    });
+  }
 } 

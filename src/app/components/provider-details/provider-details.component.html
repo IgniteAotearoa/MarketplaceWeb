@@ -92,33 +92,46 @@
 
           <div class="dates-section">
             <h3>Select a Date</h3>
-            <div class="dates-list">
-              @for (date of provider.availableDates; track date) {
-                <button 
-                  class="date-button" 
-                  [class.selected]="selectedDate === date"
-                  (click)="onDateSelect(date)"
-                >
-                  {{ date | date:'MMM d, y' }}
-                </button>
-              }
-            </div>
+            <mat-calendar
+              [selected]="selectedDate"
+              [dateFilter]="dateFilter"
+              (selectedChange)="onDateChange($event)"
+            ></mat-calendar>
           </div>
 
           @if (selectedDate) {
             <div class="times-section">
               <h3>Available Times</h3>
-              <div class="times-list">
-                @for (time of availableTimeSlots; track time) {
-                  <button 
-                    class="time-button"
-                    [class.selected]="selectedTime === time"
-                    (click)="onTimeSelect(time)"
-                  >
-                    {{ time | date:'shortTime' }}
-                  </button>
-                }
-              </div>
+              @if (loadingTimeSlots) {
+                <div class="loading-times">Loading available times...</div>
+              } @else {
+                <div class="times-grid">
+                  <div class="times-column">
+                    <h4>AM</h4>
+                    @for (time of amTimeSlots; track time) {
+                      <button 
+                        class="time-button"
+                        [class.selected]="selectedTime === time"
+                        (click)="onTimeSelect(time)"
+                      >
+                        {{ time }}
+                      </button>
+                    }
+                  </div>
+                  <div class="times-column">
+                    <h4>PM</h4>
+                    @for (time of pmTimeSlots; track time) {
+                      <button 
+                        class="time-button"
+                        [class.selected]="selectedTime === time"
+                        (click)="onTimeSelect(time)"
+                      >
+                        {{ time }}
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
             </div>
           }
 
