@@ -9,47 +9,87 @@
   } @else if (error) {
     <div class="error">{{ error }}</div>
   } @else if (provider) {
-    <div class="provider-header">
-      <div class="provider-image-container">
-        <img [src]="provider.avatar || 'assets/images/default-avatar.svg'" [alt]="provider.firstName + ' ' + provider.lastName" class="provider-image">
-      </div>
-      <div class="provider-info">
-        <h1>{{ provider.firstName }} {{ provider.lastName }}</h1>
-        <div class="provider-location">{{ provider.city }}{{ provider.country ? ', ' + provider.country : '' }}</div>
-        <div class="provider-type">{{ provider.type }}</div>
-  
-        <div class="booking-mediums">
-          @if (bookingMediums['video']) {
-            <img [src]="'assets/icons/video-icon.svg'" alt="Video sessions available" class="booking-icon" title="Video sessions available">
-          }
-          @if (bookingMediums['phone']) {
-            <img [src]="'assets/icons/phone-icon.svg'" alt="Phone sessions available" class="booking-icon" title="Phone sessions available">
-          }
-          @if (bookingMediums['inPerson']) {
-            <img [src]="'assets/icons/in-person-icon.svg'" alt="In-person sessions available" class="booking-icon" title="In-person sessions available">
-          }
+    <div class="content-wrapper">
+      <div class="main-content">
+        <div class="provider-header">
+          <div class="provider-image-container">
+            <img [src]="provider.avatar || 'assets/images/default-avatar.svg'" [alt]="provider.firstName + ' ' + provider.lastName" class="provider-image">
+          </div>
+          <div class="provider-info">
+            <h1>{{ provider.firstName }} {{ provider.lastName }}</h1>
+            <div class="provider-location">{{ provider.city }}{{ provider.country ? ', ' + provider.country : '' }}</div>
+            <div class="provider-type">{{ provider.type }}</div>
+    
+            <div class="booking-mediums">
+              @if (bookingMediums['video']) {
+                <img [src]="'assets/icons/video-icon.svg'" alt="Video sessions available" class="booking-icon" title="Video sessions available">
+              }
+              @if (bookingMediums['phone']) {
+                <img [src]="'assets/icons/phone-icon.svg'" alt="Phone sessions available" class="booking-icon" title="Phone sessions available">
+              }
+              @if (bookingMediums['inPerson']) {
+                <img [src]="'assets/icons/in-person-icon.svg'" alt="In-person sessions available" class="booking-icon" title="In-person sessions available">
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="provider-content">
+          <div class="provider-section">
+            <h2>About</h2>
+            <p>{{ provider.biography }}</p>
+          </div>
+
+          <div class="provider-section">
+            <h2>Specialties</h2>
+            <div class="specialties-list">
+              @for (specialty of provider.specialties; track specialty) {
+                <span class="specialty-tag">{{ specialty }}</span>
+              }
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="provider-content">
-      <div class="provider-section">
-        <h2>About</h2>
-        <p>{{ provider.biography }}</p>
-      </div>
-
-      <div class="provider-section">
-        <h2>Specialties</h2>
-        <div class="specialties-list">
-          @for (specialty of provider.specialties; track specialty) {
-            <span class="specialty-tag">{{ specialty }}</span>
-          }
-        </div>
-      </div>
-
-      <div class="provider-section">
+      <div class="booking-card">
         <h2>Book a Session</h2>
         <div class="booking-container">
+          <div class="booking-medium-section">
+            <h3>Select Booking Type</h3>
+            <div class="booking-medium-list">
+              @if (bookingMediums['video']) {
+                <button 
+                  class="medium-button" 
+                  [class.selected]="selectedMedium === 'video'"
+                  (click)="onMediumSelect('video')"
+                >
+                  <img [src]="'assets/icons/video-icon.svg'" alt="Video" class="medium-icon">
+                  <span>Video Session</span>
+                </button>
+              }
+              @if (bookingMediums['phone']) {
+                <button 
+                  class="medium-button" 
+                  [class.selected]="selectedMedium === 'phone'"
+                  (click)="onMediumSelect('phone')"
+                >
+                  <img [src]="'assets/icons/phone-icon.svg'" alt="Phone" class="medium-icon">
+                  <span>Phone Session</span>
+                </button>
+              }
+              @if (bookingMediums['inPerson']) {
+                <button 
+                  class="medium-button" 
+                  [class.selected]="selectedMedium === 'inPerson'"
+                  (click)="onMediumSelect('inPerson')"
+                >
+                  <img [src]="'assets/icons/in-person-icon.svg'" alt="In-person" class="medium-icon">
+                  <span>In-person Session</span>
+                </button>
+              }
+            </div>
+          </div>
+
           <div class="dates-section">
             <h3>Select a Date</h3>
             <div class="dates-list">
@@ -70,15 +110,114 @@
               <h3>Available Times</h3>
               <div class="times-list">
                 @for (time of availableTimeSlots; track time) {
-                  <button class="time-button">
+                  <button 
+                    class="time-button"
+                    [class.selected]="selectedTime === time"
+                    (click)="onTimeSelect(time)"
+                  >
                     {{ time | date:'shortTime' }}
                   </button>
                 }
               </div>
             </div>
           }
+
+          <button 
+            class="book-button" 
+            [disabled]="!canBook"
+            (click)="openBookingModal()"
+          >
+            Book Session
+          </button>
         </div>
       </div>
     </div>
   }
 </div>
+
+<!-- Booking Modal -->
+@if (showBookingModal) {
+  <div class="modal-overlay">
+    <div class="modal-content">
+      <button class="close-button" (click)="closeBookingModal()">
+        <span class="material-icons">close</span>
+      </button>
+
+      <div class="modal-header">
+        <h2>Book Your Session</h2>
+        <div class="step-indicator">
+          <div class="step" [class.active]="bookingStep === 1">1</div>
+          <div class="step-line"></div>
+          <div class="step" [class.active]="bookingStep === 2">2</div>
+        </div>
+      </div>
+
+      @if (bookingStep === 1) {
+        <div class="modal-step">
+          <h3>Personal Information</h3>
+          <form class="booking-form" [formGroup]="bookingForm">
+            <div class="form-field">
+              <label for="name">Full Name</label>
+              <input id="name" type="text" formControlName="name" placeholder="Enter your full name">
+            </div>
+            <div class="form-field">
+              <label for="email">Email</label>
+              <input id="email" type="email" formControlName="email" placeholder="Enter your email">
+            </div>
+            <div class="form-field">
+              <label for="phone">Phone Number</label>
+              <input id="phone" type="tel" formControlName="phone" placeholder="Enter your phone number">
+            </div>
+          </form>
+          <button 
+            class="next-button" 
+            [disabled]="!bookingForm.valid"
+            (click)="nextStep()"
+          >
+            Next
+          </button>
+        </div>
+      } @else {
+        <div class="modal-step">
+          <h3>Payment Method</h3>
+          <div class="payment-options">
+            <button 
+              class="payment-option" 
+              [class.selected]="selectedPaymentOption === 'individual'"
+              (click)="selectPaymentOption('individual')"
+            >
+              <h4>As an Individual</h4>
+              <p>Pay for your own session</p>
+            </button>
+            <button 
+              class="payment-option" 
+              [class.selected]="selectedPaymentOption === 'employee'"
+              (click)="selectPaymentOption('employee')"
+            >
+              <h4>As an Employee</h4>
+              <p>Use your employee benefits</p>
+            </button>
+            <button 
+              class="payment-option" 
+              [class.selected]="selectedPaymentOption === 'student'"
+              (click)="selectPaymentOption('student')"
+            >
+              <h4>As a Student</h4>
+              <p>Use your student benefits</p>
+            </button>
+          </div>
+          <div class="modal-actions">
+            <button class="back-button" (click)="previousStep()">Back</button>
+            <button 
+              class="confirm-button" 
+              [disabled]="!selectedPaymentOption"
+              (click)="confirmBooking()"
+            >
+              Confirm Booking
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}
