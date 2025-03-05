@@ -15,9 +15,20 @@ export class ProviderSearchComponent implements OnInit {
   providers: Provider[] = [];
   filteredProviders: Provider[] = [];
   specialties: string[] = [];
-  selectedSpecialties: Set<string> = new Set();
+  selectedSpecialties = new Set<string>();
   loading = true;
   error: string | null = null;
+  isSpecialtyExpanded = true;  // Start expanded by default
+  isPriceExpanded = true;
+  
+  // Price filter
+  priceRanges = [
+    { min: 0, max: 50, label: 'Under $50' },
+    { min: 50, max: 100, label: '$50 - $100' },
+    { min: 100, max: 150, label: '$100 - $150' },
+    { min: 150, max: Infinity, label: '$150+' }
+  ];
+  selectedPriceRanges = new Set<number>();
 
   constructor(private providerService: ProviderService) {}
 
@@ -51,14 +62,35 @@ export class ProviderSearchComponent implements OnInit {
     this.applyFilters();
   }
 
-  private applyFilters(): void {
-    if (this.selectedSpecialties.size === 0) {
-      this.filteredProviders = this.providers;
-      return;
-    }
+  togglePriceFilter() {
+    this.isPriceExpanded = !this.isPriceExpanded;
+  }
 
-    this.filteredProviders = this.providers.filter(provider =>
-      provider.specialties.some(specialty => this.selectedSpecialties.has(specialty))
-    );
+  togglePriceRange(index: number): void {
+    if (this.selectedPriceRanges.has(index)) {
+      this.selectedPriceRanges.delete(index);
+    } else {
+      this.selectedPriceRanges.add(index);
+    }
+    this.applyFilters();
+  }
+
+  private applyFilters(): void {
+    this.filteredProviders = this.providers.filter(provider => {
+      const matchesSpecialty = this.selectedSpecialties.size === 0 || 
+        provider.specialties.some(specialty => this.selectedSpecialties.has(specialty));
+      
+      const matchesPrice = this.selectedPriceRanges.size === 0 ||
+        Array.from(this.selectedPriceRanges).some(index => {
+          const range = this.priceRanges[index];
+          return provider.fee != null && provider.fee >= range.min && provider.fee < range.max;
+        });
+
+      return matchesSpecialty && matchesPrice;
+    });
+  }
+
+  toggleSpecialtyFilter() {
+    this.isSpecialtyExpanded = !this.isSpecialtyExpanded;
   }
 }

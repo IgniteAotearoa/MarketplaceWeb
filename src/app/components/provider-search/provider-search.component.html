@@ -1,18 +1,50 @@
 <div class="provider-search">
   <!-- Left sidebar with filters -->
   <aside class="filters">
-    <h2>Filter by Specialty</h2>
-    <div class="specialty-filters">
-      @for (specialty of specialties; track specialty) {
-        <label class="filter-item">
-          <input
-            type="checkbox"
-            [checked]="selectedSpecialties.has(specialty)"
-            (change)="toggleSpecialty(specialty)"
-          >
-          {{ specialty }}
-        </label>
-      }
+    <div class="filters-container">
+      <h2 class="filters-main-header">Filter By</h2>
+      
+      <div class="filter-section">
+        <button class="filter-section-header" (click)="toggleSpecialtyFilter()">
+          <h3>Specialties</h3>
+          <span class="material-icons toggle-icon" [class.expanded]="isSpecialtyExpanded">
+            expand_more
+          </span>
+        </button>
+        <div class="specialty-filters" [class.expanded]="isSpecialtyExpanded">
+          @for (specialty of specialties; track specialty) {
+            <label class="filter-item">
+              <input
+                type="checkbox"
+                [checked]="selectedSpecialties.has(specialty)"
+                (change)="toggleSpecialty(specialty)"
+              >
+              {{ specialty }}
+            </label>
+          }
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <button class="filter-section-header" (click)="togglePriceFilter()">
+          <h3>Price Range</h3>
+          <span class="material-icons toggle-icon" [class.expanded]="isPriceExpanded">
+            expand_more
+          </span>
+        </button>
+        <div class="specialty-filters" [class.expanded]="isPriceExpanded">
+          @for (range of priceRanges; track range.label; let i = $index) {
+            <label class="filter-item">
+              <input
+                type="checkbox"
+                [checked]="selectedPriceRanges.has(i)"
+                (change)="togglePriceRange(i)"
+              >
+              {{ range.label }}
+            </label>
+          }
+        </div>
+      </div>
     </div>
   </aside>
 
@@ -27,8 +59,9 @@
     } @else {
       @for (provider of filteredProviders; track provider.providerId) {
         <div class="provider-card">
-          <div class="provider-image">
-            <img [src]="provider.imageUrl || 'assets/images/default-provider.png'" [alt]="provider.firstName + ' ' + provider.lastName">
+          <div class="provider-image-container">
+            <div class="provider-type-tag">Dietitian</div>
+            <img [src]="provider.imageUrl || 'assets/images/default-provider.png'" [alt]="provider.firstName + ' ' + provider.lastName" class="provider-image">
           </div>
           <div class="provider-info">
             <h3>{{ provider.firstName }} {{ provider.lastName }}</h3>
@@ -39,8 +72,9 @@
               }
             </div>
             @if (provider.fee) {
-              <p class="fee">${{ provider.fee }} per session</p>
+              <div class="fee">${{ provider.fee }} per session</div>
             }
+            <button class="schedule-button">Schedule</button>
           </div>
         </div>
       }
