@@ -62,7 +62,9 @@
     <!-- Main content area with provider cards -->
     <main class="providers-grid">
       @if (loading) {
-        <div class="loading">Loading providers...</div>
+        <div class="loading">
+          <app-spinner />
+        </div>
       } @else if (error) {
         <div class="error">{{ error }}</div>
       } @else if (filteredProviders.length === 0) {

@@ -5,7 +5,9 @@
   </button>
 
   @if (loading) {
-    <div class="loading">Loading provider details...</div>
+    <div class="loading">
+      <app-spinner />
+    </div>
   } @else if (error) {
     <div class="error">{{ error }}</div>
   } @else if (provider) {
@@ -103,7 +105,9 @@
             <div class="times-section">
               <h3>Available Times</h3>
               @if (loadingTimeSlots) {
-                <div class="loading-times">Loading available times...</div>
+                <div class="loading-times">
+                  <app-spinner size="small" />
+                </div>
               } @else {
                 <div class="times-grid">
                   <div class="times-column">

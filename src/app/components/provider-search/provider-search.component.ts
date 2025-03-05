@@ -4,11 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ProviderService } from '../../services/provider.service';
 import { Provider } from '../../models/provider.interface';
+import { SpinnerComponent } from '../shared/spinner/spinner.component';
 
 @Component({
   selector: 'app-provider-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    SpinnerComponent
+  ],
   templateUrl: './provider-search.component.html',
   styleUrl: './provider-search.component.sass'
 })
