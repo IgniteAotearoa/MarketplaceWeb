@@ -1,0 +1,94 @@
+.provider-search
+  display: flex
+  gap: 2rem
+  padding: 2rem
+  max-width: 1400px
+  margin: 0 auto
+
+.filters
+  width: 250px
+  flex-shrink: 0
+  
+  h2
+    font-size: 1.25rem
+    margin-bottom: 1rem
+    color: var(--color-text)
+
+.specialty-filters
+  display: flex
+  flex-direction: column
+  gap: 0.5rem
+
+.filter-item
+  display: flex
+  align-items: center
+  gap: 0.5rem
+  cursor: pointer
+  
+  input[type="checkbox"]
+    cursor: pointer
+
+.providers-grid
+  flex: 1
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
+  gap: 2rem
+
+.provider-card
+  background: white
+  border-radius: 12px
+  overflow: hidden
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+  transition: transform 0.2s ease
+  
+  &:hover
+    transform: translateY(-4px)
+
+.provider-image
+  height: 200px
+  overflow: hidden
+  
+  img
+    width: 100%
+    height: 100%
+    object-fit: cover
+
+.provider-info
+  padding: 1.5rem
+
+  h3
+    font-size: 1.25rem
+    margin-bottom: 0.5rem
+    color: var(--color-text)
+
+  .short-description
+    color: var(--color-text)
+    opacity: 0.8
+    margin-bottom: 1rem
+    line-height: 1.4
+
+.specialties
+  display: flex
+  flex-wrap: wrap
+  gap: 0.5rem
+  margin-bottom: 1rem
+
+.specialty-tag
+  background: var(--color-background)
+  color: var(--color-text)
+  padding: 0.25rem 0.75rem
+  border-radius: 16px
+  font-size: 0.875rem
+
+.fee
+  font-weight: 500
+  color: var(--color-text)
+
+.loading, .error, .no-results
+  grid-column: 1 / -1
+  text-align: center
+  padding: 2rem
+  color: var(--color-text)
+
+.error
+  color: #dc3545

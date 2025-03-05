@@ -1,1 +1,35 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import 'styles/theme'
+
+/* Reset default styles */
+*
+  margin: 0
+  padding: 0
+  box-sizing: border-box
+
+html, body
+  height: 100%
+  width: 100%
+
+body
+  background-image: url('assets/images/gradient-bg.jpg')
+  background-size: 200% 200%
+  background-position: center 200px  // Using pixels for more precise control
+  background-repeat: no-repeat
+  background-attachment: fixed
+  position: relative
+  overflow-x: hidden
+
+  &::before
+    content: ''
+    position: fixed
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    background: inherit
+    background-size: 100% 100%
+    background-position: center 100px
+    transform: scale(1.1)
+    z-index: -1

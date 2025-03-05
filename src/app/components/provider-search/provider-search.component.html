@@ -1,0 +1,49 @@
+<div class="provider-search">
+  <!-- Left sidebar with filters -->
+  <aside class="filters">
+    <h2>Filter by Specialty</h2>
+    <div class="specialty-filters">
+      @for (specialty of specialties; track specialty) {
+        <label class="filter-item">
+          <input
+            type="checkbox"
+            [checked]="selectedSpecialties.has(specialty)"
+            (change)="toggleSpecialty(specialty)"
+          >
+          {{ specialty }}
+        </label>
+      }
+    </div>
+  </aside>
+
+  <!-- Main content area with provider cards -->
+  <main class="providers-grid">
+    @if (loading) {
+      <div class="loading">Loading providers...</div>
+    } @else if (error) {
+      <div class="error">{{ error }}</div>
+    } @else if (filteredProviders.length === 0) {
+      <div class="no-results">No providers found matching your criteria.</div>
+    } @else {
+      @for (provider of filteredProviders; track provider.providerId) {
+        <div class="provider-card">
+          <div class="provider-image">
+            <img [src]="provider.imageUrl || 'assets/images/default-provider.png'" [alt]="provider.firstName + ' ' + provider.lastName">
+          </div>
+          <div class="provider-info">
+            <h3>{{ provider.firstName }} {{ provider.lastName }}</h3>
+            <p class="short-description">{{ provider.shortDescription }}</p>
+            <div class="specialties">
+              @for (specialty of provider.specialties; track specialty) {
+                <span class="specialty-tag">{{ specialty }}</span>
+              }
+            </div>
+            @if (provider.fee) {
+              <p class="fee">${{ provider.fee }} per session</p>
+            }
+          </div>
+        </div>
+      }
+    }
+  </main>
+</div>
