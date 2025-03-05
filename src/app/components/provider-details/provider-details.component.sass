@@ -1,0 +1,241 @@
+.provider-details
+  max-width: 1200px
+  margin: 2rem auto
+  padding: 2rem
+  background: white
+  border-radius: 8px
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)
+
+  .back-button
+    display: flex
+    align-items: center
+    gap: 0.5rem
+    background: transparent
+    border: none
+    color: #666
+    font-size: 1rem
+    padding: 0.5rem
+    margin-bottom: 1.5rem
+    cursor: pointer
+    transition: color 0.2s ease
+    
+    .material-icons
+      font-size: 1.25rem
+    
+    &:hover
+      color: #2c5282
+
+  .loading, .error
+    text-align: center
+    padding: 2rem
+    font-size: 1.1rem
+
+  .error
+    color: #dc3545
+
+  .provider-header
+    display: flex
+    gap: 2rem
+    margin-bottom: 2rem
+
+    .provider-image-container
+      flex-shrink: 0
+
+      .provider-image
+        width: 200px
+        height: 200px
+        border-radius: 8px
+        object-fit: cover
+
+    .provider-info
+      flex: 1
+      
+      h1
+        margin: 0 0 0.5rem
+        font-size: 2rem
+        color: #333
+
+      .provider-location, .provider-type
+        color: #666
+        margin-bottom: 0.5rem
+
+      .fee
+        font-size: 1.2rem
+        color: #2c5282
+        margin: 0.5rem 0
+
+      .booking-mediums
+        display: flex
+        gap: 0.75rem
+        margin-top: 1rem
+
+        .booking-icon
+          width: 20px
+          height: 20px
+          opacity: 0.6
+          cursor: help
+          transition: opacity 0.2s ease
+          
+          &:hover
+            opacity: 1
+
+  .provider-content
+    .provider-section
+      margin-bottom: 2rem
+
+      h2
+        color: #333
+        margin-bottom: 1rem
+        font-size: 1.5rem
+
+      .specialties-list
+        display: flex
+        flex-wrap: wrap
+        gap: 0.5rem
+
+        .specialty-tag
+          background: #e2e8f0
+          padding: 0.5rem 1rem
+          border-radius: 20px
+          font-size: 0.9rem
+          color: #4a5568
+
+      .booking-container
+        .dates-section, .times-section
+          margin-bottom: 1.5rem
+
+          h3
+            color: #4a5568
+            margin-bottom: 1rem
+            font-size: 1.2rem
+
+        .dates-list, .times-list
+          display: flex
+          flex-wrap: wrap
+          gap: 0.5rem
+
+          .date-button, .time-button
+            padding: 0.5rem 1rem
+            border: 1px solid #e2e8f0
+            border-radius: 4px
+            background: white
+            cursor: pointer
+            transition: all 0.2s ease
+            
+            &:hover
+              background: #f7fafc
+              border-color: #cbd5e0
+            
+            &.selected
+              background: #2c5282
+              color: white
+              border-color: #2c5282
+
+.booking-mediums
+  display: flex
+  gap: 1rem
+  margin-bottom: 1.5rem
+  
+  .booking-icon
+    width: 24px
+    height: 24px
+    opacity: 0.6
+    transition: opacity 0.2s ease
+    
+    &:hover
+      opacity: 1
+
+.provider-content
+  display: flex
+  flex-direction: column
+  gap: 2.5rem
+
+.provider-section
+  h2
+    font-size: 1.5rem
+    font-weight: 600
+    margin: 0 0 1rem
+    color: var(--color-text)
+  
+  h3
+    font-size: 1.25rem
+    font-weight: 500
+    margin: 0 0 1rem
+    color: var(--color-text)
+  
+  p
+    font-size: 1.125rem
+    line-height: 1.6
+    color: #4b5563
+    margin: 0
+
+.specialties-list
+  display: flex
+  flex-wrap: wrap
+  gap: 0.75rem
+
+.specialty-tag
+  background: #f3f4f6
+  padding: 0.5rem 1rem
+  border-radius: 6px
+  font-size: 0.875rem
+  font-weight: 500
+  color: #4b5563
+
+.booking-container
+  display: flex
+  gap: 2rem
+  
+  @media (max-width: 768px)
+    flex-direction: column
+
+.dates-section, .times-section
+  flex: 1
+
+.dates-list, .times-list
+  display: flex
+  flex-wrap: wrap
+  gap: 0.75rem
+
+.date-button, .time-button
+  background: white
+  border: 1px solid #e5e7eb
+  padding: 0.75rem 1rem
+  border-radius: 6px
+  font-size: 0.875rem
+  font-weight: 500
+  color: #4b5563
+  cursor: pointer
+  transition: all 0.2s ease
+  
+  &:hover
+    background: #f9fafb
+    border-color: #d1d5db
+  
+  &.selected
+    background: #000
+    color: white
+    border-color: #000
+
+.book-button
+  background: #000
+  color: white
+  border: none
+  padding: 1rem 2rem
+  border-radius: 9999px
+  font-size: 1rem
+  font-weight: 500
+  cursor: pointer
+  transition: background-color 0.2s ease
+  
+  &:hover
+    background: #333
+
+.loading, .error
+  text-align: center
+  padding: 3rem
+  font-size: 1.125rem
+  color: #666
+
+.error
+  color: #e53e3e

@@ -1,83 +1,106 @@
 <div class="provider-search">
-  <!-- Left sidebar with filters -->
-  <aside class="filters">
-    <div class="filters-container">
-      <h2 class="filters-main-header">Filter By</h2>
-      
-      <div class="filter-section">
-        <button class="filter-section-header" (click)="toggleSpecialtyFilter()">
-          <h3>Specialties</h3>
-          <span class="material-icons toggle-icon" [class.expanded]="isSpecialtyExpanded">
-            expand_more
-          </span>
-        </button>
-        <div class="specialty-filters" [class.expanded]="isSpecialtyExpanded">
-          @for (specialty of specialties; track specialty) {
-            <label class="filter-item">
-              <input
-                type="checkbox"
-                [checked]="selectedSpecialties.has(specialty)"
-                (change)="toggleSpecialty(specialty)"
-              >
-              {{ specialty }}
-            </label>
-          }
-        </div>
-      </div>
-
-      <div class="filter-section">
-        <button class="filter-section-header" (click)="togglePriceFilter()">
-          <h3>Price Range</h3>
-          <span class="material-icons toggle-icon" [class.expanded]="isPriceExpanded">
-            expand_more
-          </span>
-        </button>
-        <div class="specialty-filters" [class.expanded]="isPriceExpanded">
-          @for (range of priceRanges; track range.label; let i = $index) {
-            <label class="filter-item">
-              <input
-                type="checkbox"
-                [checked]="selectedPriceRanges.has(i)"
-                (change)="togglePriceRange(i)"
-              >
-              {{ range.label }}
-            </label>
-          }
-        </div>
-      </div>
+  <!-- Header section -->
+  <header class="search-header">
+    <h1>Browse trusted therapists,<br>coaches, and more</h1>
+    <p>Connect with experienced professionals who can help you on your journey</p>
+    <div class="search-box">
+      <input type="text" placeholder="Search" [(ngModel)]="searchQuery" (input)="onSearch()">
+      <span class="material-icons">search</span>
     </div>
-  </aside>
+  </header>
 
-  <!-- Main content area with provider cards -->
-  <main class="providers-grid">
-    @if (loading) {
-      <div class="loading">Loading providers...</div>
-    } @else if (error) {
-      <div class="error">{{ error }}</div>
-    } @else if (filteredProviders.length === 0) {
-      <div class="no-results">No providers found matching your criteria.</div>
-    } @else {
-      @for (provider of filteredProviders; track provider.providerId) {
-        <div class="provider-card">
-          <div class="provider-image-container">
-            <div class="provider-type-tag">Dietitian</div>
-            <img [src]="provider.imageUrl || 'assets/images/default-provider.png'" [alt]="provider.firstName + ' ' + provider.lastName" class="provider-image">
-          </div>
-          <div class="provider-info">
-            <h3>{{ provider.firstName }} {{ provider.lastName }}</h3>
-            <p class="short-description">{{ provider.shortDescription }}</p>
-            <div class="specialties">
-              @for (specialty of provider.specialties; track specialty) {
-                <span class="specialty-tag">{{ specialty }}</span>
-              }
-            </div>
-            @if (provider.fee) {
-              <div class="fee">${{ provider.fee }} per session</div>
+  <div class="search-content">
+    <!-- Left sidebar with filters -->
+    <aside class="filters">
+      <div class="filters-container">
+        <h2 class="filters-main-header">Filter By</h2>
+        
+        <div class="filter-section">
+          <button class="filter-section-header" (click)="toggleSpecialtyFilter()">
+            <h3>Specialties</h3>
+            <span class="material-icons toggle-icon" [class.expanded]="isSpecialtyExpanded">
+              expand_more
+            </span>
+          </button>
+          <div class="specialty-filters" [class.expanded]="isSpecialtyExpanded">
+            @for (specialty of specialties; track specialty) {
+              <label class="filter-item">
+                <input
+                  type="checkbox"
+                  [checked]="selectedSpecialties.has(specialty)"
+                  (change)="toggleSpecialty(specialty)"
+                >
+                {{ specialty }}
+              </label>
             }
-            <button class="schedule-button">Schedule</button>
           </div>
         </div>
+
+        <div class="filter-section">
+          <button class="filter-section-header" (click)="togglePriceFilter()">
+            <h3>Price Range</h3>
+            <span class="material-icons toggle-icon" [class.expanded]="isPriceExpanded">
+              expand_more
+            </span>
+          </button>
+          <div class="specialty-filters" [class.expanded]="isPriceExpanded">
+            @for (range of priceRanges; track range.label; let i = $index) {
+              <label class="filter-item">
+                <input
+                  type="checkbox"
+                  [checked]="selectedPriceRanges.has(i)"
+                  (change)="togglePriceRange(i)"
+                >
+                {{ range.label }}
+              </label>
+            }
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main content area with provider cards -->
+    <main class="providers-grid">
+      @if (loading) {
+        <div class="loading">Loading providers...</div>
+      } @else if (error) {
+        <div class="error">{{ error }}</div>
+      } @else if (filteredProviders.length === 0) {
+        <div class="no-results">No providers found matching your criteria.</div>
+      } @else {
+        @for (provider of filteredProviders; track provider.providerId) {
+          <div class="provider-card">
+            <div class="provider-image-container">
+              <div class="provider-type-tag">{{ provider.type }}</div>
+              <img [src]="provider.imageUrl || 'assets/images/default-avatar.svg'" [alt]="provider.firstName + ' ' + provider.lastName" class="provider-image">
+            </div>
+            <div class="provider-info">
+              <h3>{{ provider.firstName }} {{ provider.lastName }}</h3>
+              <div class="provider-location">
+                {{ provider.location?.city }}{{ provider.location?.country ? ', ' + provider.location.country : '' }}
+              </div>
+              <hr class="provider-divider">
+              @if (provider.fee) {
+                <div class="fee">${{ provider.fee }} per session</div>
+              }
+              <div class="card-footer">
+                <div class="booking-mediums">
+                  @if (provider.bookingMediums?.video) {
+                    <img [src]="BOOKING_ICONS.video" alt="Video sessions available" class="booking-icon" title="Video sessions available">
+                  }
+                  @if (provider.bookingMediums?.phone) {
+                    <img [src]="BOOKING_ICONS.phone" alt="Phone sessions available" class="booking-icon" title="Phone sessions available">
+                  }
+                  @if (provider.bookingMediums?.inPerson) {
+                    <img [src]="BOOKING_ICONS.inPerson" alt="In-person sessions available" class="booking-icon" title="In-person sessions available">
+                  }
+                </div>
+                <button class="schedule-button" [routerLink]="['/provider', provider.providerId]">Schedule</button>
+              </div>
+            </div>
+          </div>
+        }
       }
-    }
-  </main>
+    </main>
+  </div>
 </div>

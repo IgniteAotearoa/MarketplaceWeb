@@ -1,0 +1,84 @@
+<div class="provider-details">
+  <button class="back-button" (click)="goBackToSearch()">
+    <span class="material-icons">arrow_back</span>
+    Back to Search
+  </button>
+
+  @if (loading) {
+    <div class="loading">Loading provider details...</div>
+  } @else if (error) {
+    <div class="error">{{ error }}</div>
+  } @else if (provider) {
+    <div class="provider-header">
+      <div class="provider-image-container">
+        <img [src]="provider.avatar || 'assets/images/default-avatar.svg'" [alt]="provider.firstName + ' ' + provider.lastName" class="provider-image">
+      </div>
+      <div class="provider-info">
+        <h1>{{ provider.firstName }} {{ provider.lastName }}</h1>
+        <div class="provider-location">{{ provider.city }}{{ provider.country ? ', ' + provider.country : '' }}</div>
+        <div class="provider-type">{{ provider.type }}</div>
+  
+        <div class="booking-mediums">
+          @if (bookingMediums['video']) {
+            <img [src]="'assets/icons/video-icon.svg'" alt="Video sessions available" class="booking-icon" title="Video sessions available">
+          }
+          @if (bookingMediums['phone']) {
+            <img [src]="'assets/icons/phone-icon.svg'" alt="Phone sessions available" class="booking-icon" title="Phone sessions available">
+          }
+          @if (bookingMediums['inPerson']) {
+            <img [src]="'assets/icons/in-person-icon.svg'" alt="In-person sessions available" class="booking-icon" title="In-person sessions available">
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="provider-content">
+      <div class="provider-section">
+        <h2>About</h2>
+        <p>{{ provider.biography }}</p>
+      </div>
+
+      <div class="provider-section">
+        <h2>Specialties</h2>
+        <div class="specialties-list">
+          @for (specialty of provider.specialties; track specialty) {
+            <span class="specialty-tag">{{ specialty }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="provider-section">
+        <h2>Book a Session</h2>
+        <div class="booking-container">
+          <div class="dates-section">
+            <h3>Select a Date</h3>
+            <div class="dates-list">
+              @for (date of provider.availableDates; track date) {
+                <button 
+                  class="date-button" 
+                  [class.selected]="selectedDate === date"
+                  (click)="onDateSelect(date)"
+                >
+                  {{ date | date:'MMM d, y' }}
+                </button>
+              }
+            </div>
+          </div>
+
+          @if (selectedDate) {
+            <div class="times-section">
+              <h3>Available Times</h3>
+              <div class="times-list">
+                @for (time of availableTimeSlots; track time) {
+                  <button class="time-button">
+                    {{ time | date:'shortTime' }}
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>
