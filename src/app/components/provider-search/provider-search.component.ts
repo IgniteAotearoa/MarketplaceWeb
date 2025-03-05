@@ -120,4 +120,14 @@ export class ProviderSearchComponent implements OnInit {
   toggleSpecialtyFilter() {
     this.isSpecialtyExpanded = !this.isSpecialtyExpanded;
   }
+
+  get activeFiltersCount(): number {
+    return this.selectedSpecialties.size + this.selectedPriceRanges.size;
+  }
+
+  clearAllFilters(): void {
+    this.selectedSpecialties.clear();
+    this.selectedPriceRanges.clear();
+    this.applyFilters();
+  }
 }

@@ -13,7 +13,14 @@
     <!-- Left sidebar with filters -->
     <aside class="filters">
       <div class="filters-container">
-        <h2 class="filters-main-header">Filter By</h2>
+        <div class="filters-main-header">
+          <div class="header-content">
+            <h2>Filter By</h2>
+            @if (activeFiltersCount > 0) {
+              <div class="filter-count">{{ activeFiltersCount }}</div>
+            }
+          </div>
+        </div>
         
         <div class="filter-section">
           <button class="filter-section-header" (click)="toggleSpecialtyFilter()">
@@ -56,6 +63,12 @@
             }
           </div>
         </div>
+
+        @if (activeFiltersCount > 0) {
+          <button class="clear-filters-button" (click)="clearAllFilters()">
+            Clear All Filters
+          </button>
+        }
       </div>
     </aside>
 
