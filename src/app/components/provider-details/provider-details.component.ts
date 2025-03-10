@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProviderService } from '../../services/provider.service';
+import { StripeService } from '../../services/stripe.service';
 import { ProviderDetails } from '../../models/provider.interface';
 import { Subject, takeUntil } from 'rxjs';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -56,12 +57,13 @@ export class ProviderDetailsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private providerService: ProviderService,
+    private stripeService: StripeService,
     private formBuilder: FormBuilder
   ) {
     this.bookingForm = this.formBuilder.group({
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', Validators.required]
+      name: ['Dan Black', Validators.required],
+      email: ['devtestignite@gmail.com', [Validators.required, Validators.email]],
+      phone: ['12345678', Validators.required]
     });
   }
 
@@ -194,14 +196,22 @@ export class ProviderDetailsComponent implements OnInit, OnDestroy {
     this.showBookingModal = true;
     this.bookingStep = 1;
     this.selectedPaymentOption = null;
-    this.bookingForm.reset();
+    this.bookingForm.patchValue({
+      name: 'Dan Black',
+      email: 'devtestignite@gmail.com',
+      phone: '12345678'
+    });
   }
 
   closeBookingModal(): void {
     this.showBookingModal = false;
     this.bookingStep = 1;
     this.selectedPaymentOption = null;
-    this.bookingForm.reset();
+    this.bookingForm.patchValue({
+      name: 'Dan Black',
+      email: 'devtestignite@gmail.com',
+      phone: '12345678'
+    });
   }
 
   nextStep(): void {
@@ -220,21 +230,59 @@ export class ProviderDetailsComponent implements OnInit, OnDestroy {
     this.selectedPaymentOption = option;
   }
 
-  confirmBooking(): void {
+  async confirmBooking(): Promise<void> {
     if (this.bookingForm.valid && this.selectedPaymentOption && this.provider) {
-      const bookingData = {
-        ...this.bookingForm.value,
-        paymentOption: this.selectedPaymentOption,
-        medium: this.selectedMedium,
-        date: this.selectedDate,
-        time: this.selectedTime,
-        providerId: this.provider.providerId
-      };
-      
-      console.log('Booking confirmed:', bookingData);
-      // TODO: Implement actual booking logic here
-      this.closeBookingModal();
+      const formValues = this.bookingForm.value;
+      const [firstName, ...lastNameParts] = formValues.name.split(' ');
+      const lastName = lastNameParts.join(' ');
+
+      if (this.selectedPaymentOption === 'individual') {
+        try {
+          const appointmentRequest = {
+            firstName,
+            lastName,
+            email: formValues.email,
+            datetime: new Date(
+              this.selectedDate!.getFullYear(),
+              this.selectedDate!.getMonth(),
+              this.selectedDate!.getDate(),
+              ...this.parseTime(this.selectedTime!)
+            ).toISOString(),
+            appointmentType: this.selectedMedium!,
+          };
+
+          const payload = {
+            booking: appointmentRequest,
+            providerId: this.provider.providerId,
+            successUrl: `${window.location.origin}/payment-success`,
+            cancelUrl: `${window.location.origin}/payment-cancelled`,
+          };
+
+          const response = await this.stripeService.createCheckoutSession(payload).toPromise();
+          await this.stripeService.redirectToCheckout(response.sessionId);
+        } catch (error) {
+          console.error('Error processing payment:', error);
+          this.error = 'Failed to process payment. Please try again.';
+        }
+      } else {
+        // Handle employee or student booking logic
+        console.log('Booking with option:', this.selectedPaymentOption);
+        this.closeBookingModal();
+      }
     }
+  }
+
+  private parseTime(timeString: string): [number, number] {
+    const [time, period] = timeString.split(' ');
+    let [hours, minutes] = time.split(':').map(Number);
+    
+    if (period === 'PM' && hours !== 12) {
+      hours += 12;
+    } else if (period === 'AM' && hours === 12) {
+      hours = 0;
+    }
+    
+    return [hours, minutes];
   }
 
   goBackToSearch(): void {

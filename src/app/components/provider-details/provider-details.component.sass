@@ -37,41 +37,27 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)
   padding: 2rem
 
-.booking-card
-  background: white
-  border-radius: 8px
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)
-  padding: 2rem
-  height: fit-content
-  position: sticky
-  top: 2rem
-
-  h2
-    margin-bottom: 1.5rem
-    font-size: 1.5rem
-    color: #333
-
-  .loading, .error
-    text-align: center
-    padding: 2rem
-    font-size: 1.1rem
-
-  .error
-    color: #dc3545
-
   .provider-header
     display: flex
     gap: 2rem
     margin-bottom: 2rem
+    align-items: flex-start
 
     .provider-image-container
       flex-shrink: 0
+      width: 280px
+      height: 280px
+      border-radius: 12px
+      overflow: hidden
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)
 
       .provider-image
-        width: 200px
-        height: 200px
-        border-radius: 8px
+        width: 100%
+        height: 100%
         object-fit: cover
+        border: 2px solid white
+        box-sizing: border-box
+        border-radius: 12px
 
     .provider-info
       flex: 1
@@ -104,6 +90,28 @@
           
           &:hover
             opacity: 1
+
+.booking-card
+  background: white
+  border-radius: 8px
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)
+  padding: 2rem
+  height: fit-content
+  position: sticky
+  top: 2rem
+
+  h2
+    margin-bottom: 1.5rem
+    font-size: 1.5rem
+    color: #333
+
+  .loading, .error
+    text-align: center
+    padding: 2rem
+    font-size: 1.1rem
+
+  .error
+    color: #dc3545
 
 .provider-content
   .provider-section
